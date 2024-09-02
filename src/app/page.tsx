@@ -1,112 +1,133 @@
+"use client";
 import Image from "next/image";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { BackgroundBeams } from "@/components/ui/background-beams";
+import { DM_Sans, Exo, Lato, Orbitron, Work_Sans } from "next/font/google";
+import { cn } from "@/lib/utils";
+import IconCloud from "@/components/ui/icon-globe";
+import HyperText from "@/components/ui/hyper-text";
+import FlickeringGridRoundedDemo from "@/components/example/flickering-grid-rounded-demo";
+import FlickeringGrid from "@/components/magicui/flickering-grid";
+import Globe from "@/components/magicui/globe";
+import { BorderBeam } from "@/components/magicui/border-beam";
+import DelayedText from "@/components/ui/delayed-text";
+import { motion } from "framer-motion";
+import ThreeScene from "@/components/customUi/ThreeScene";
+import ThreeDPin from "@/components/customUi/ThreeDPin";
+import SparklesText from "@/components/magicui/sparkles-text";
+
+const exo = Exo({
+  weight: "300",
+  subsets: ["latin"],
+  style: "normal",
+});
+
+const projects = [
+  {
+    title: "IP Address Tracker",
+    url: "https://snehasisdebbarman.github.io/ip-react/",
+    description: "tracking a user location using IP address",
+  },
+  {
+    title: "Twitter Clone",
+    url: "https://snehasisdebbarman.github.io/twitter-clone/",
+    description:
+      "This is a very simple twitter like features posting texts, like , comments using react and firebase",
+  },
+];
+
+const slugs = [
+  "typescript",
+  "javascript",
+  "react",
+  "html5",
+  "css3",
+  "threedotjs",
+  "nodedotjs",
+  "nextdotjs",
+  "vercel",
+  "testinglibrary",
+  "jest",
+  "cypress",
+  "git",
+  "jira",
+  "github",
+  "visualstudiocode",
+  "sonarqube",
+  "figma",
+];
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">src/app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:size-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <main className="flex min-h-screen flex-col items-center justify-center overflow-hidden bg-black">
+      <div className="h-full relative w-full p-5 ">
+        <div className="p-5 z-10 h-[40rem] w-full relative border border-gray-600 antialiased flex justify-between">
+          <div className="flex flex-col justify-between w-[70%]">
+            <div>
+              <HyperText
+                duration={500}
+                className={cn(
+                  "text-4xl bg-clip-text text-transparent bg-gradient-to-b from-neutral-300 to-neutral-400",
+                  exo.className
+                )}
+                text="Hi, I'm Snehasis Debbarman"
+              />
+
+              <HyperText
+                duration={1000}
+                className={cn(
+                  " text-gray-500 bg-clip-text  bg-gradient-to-b from-neutral-400 to-neutral-500",
+                  exo.className
+                )}
+                text="frontend & Mobile Developer"
+              />
+            </div>
+
+            <motion.div
+              className="  w-full overflow-x-scroll"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 3, duration: 1 }}
+            >
+              <h3 className="text-white"></h3>
+              <SparklesText
+                className="text-white pt-5 text-5xl ml-5"
+                text="Projects"
+              />
+              <div className="flex w-full overflow-x-scroll py-10 ">
+                {projects.map((project) => (
+                  <ThreeDPin {...project} />
+                ))}
+              </div>
+            </motion.div>
+          </div>
+          <div
+            className={" w-[15%] text-pretty  h-full  flex flex-col-reverse"}
           >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+            <motion.div
+              className={cn(
+                "text-gray-600 text-lg font-semibold",
+                exo.className
+              )}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 3, duration: 1 }} // 3-second delay before revealing
+            >
+              Focusing on user centric experiences. Passionate about solving
+              complex problems and continuously learning new technologies.
+            </motion.div>
+          </div>
+
+          <BackgroundBeams />
+          <BorderBeam />
         </div>
-      </div>
-
-      <div className="relative z-[-1] flex place-items-center before:absolute before:h-[300px] before:w-full before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 sm:before:w-[480px] sm:after:w-[240px] before:lg:h-[360px]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className="mb-32 grid text-center lg:mb-0 lg:w-full lg:max-w-5xl lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Docs{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Learn{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Templates{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-sm opacity-50">
-            Explore starter templates for Next.js.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className="mb-3 text-2xl font-semibold">
-            Deploy{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className="m-0 max-w-[30ch] text-balance text-sm opacity-50">
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
       </div>
     </main>
   );
