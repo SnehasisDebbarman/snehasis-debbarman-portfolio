@@ -102,8 +102,8 @@ export default function Home() {
                 text="Projects"
               />
               <div className="flex w-full overflow-x-scroll py-10 ">
-                {projects.map((project) => (
-                  <ThreeDPin {...project} />
+                {projects.map((project, i) => (
+                  <ThreeDPin key={`key-project-${i}`} {...project} />
                 ))}
               </div>
             </motion.div>
