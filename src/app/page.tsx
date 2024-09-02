@@ -22,6 +22,7 @@ import { motion } from "framer-motion";
 import ThreeScene from "@/components/customUi/ThreeScene";
 import ThreeDPin from "@/components/customUi/ThreeDPin";
 import SparklesText from "@/components/magicui/sparkles-text";
+import CustomDock from "@/components/customUi/CustomDock";
 
 const exo = Exo({
   weight: "300",
@@ -96,11 +97,12 @@ export default function Home() {
               animate={{ opacity: 1 }}
               transition={{ delay: 1, duration: 1 }}
             >
-              <h3 className="text-white"></h3>
+              {/* <CustomDock /> */}
               <SparklesText
-                className="text-white pt-5 text-5xl ml-5"
+                className="text-white font-semibold pt-5 text-5xl ml-5"
                 text="Projects"
               />
+
               <div className="flex w-full overflow-x-scroll py-10 ">
                 {projects.map((project, i) => (
                   <ThreeDPin key={`key-project-${i}`} {...project} />
