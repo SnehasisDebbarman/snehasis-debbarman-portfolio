@@ -94,7 +94,7 @@ export default function Home() {
               className="  w-full overflow-x-scroll"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 3, duration: 1 }}
+              transition={{ delay: 1, duration: 1 }}
             >
               <h3 className="text-white"></h3>
               <SparklesText
