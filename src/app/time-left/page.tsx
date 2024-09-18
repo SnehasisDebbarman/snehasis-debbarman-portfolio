@@ -7,12 +7,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 const LifeCountdown = () => {
   const [birthDate, setBirthDate] = useState("");
-
   const [time, setTime] = useState({
     months: 0,
     days: 0,
@@ -22,15 +23,12 @@ const LifeCountdown = () => {
   });
 
   useEffect(() => {
-    // Retrieve birth date from local storage on component mount
-    const storedBirthDate = localStorage.getItem("birthDate");
-    if (storedBirthDate) {
-      setBirthDate(storedBirthDate);
-      console.log(storedBirthDate);
+    // Load saved birth date from localStorage
+    const savedBirthDate = localStorage.getItem("birthDate");
+    if (savedBirthDate) {
+      setBirthDate(savedBirthDate);
     }
-  }, []);
 
-  useEffect(() => {
     const calculateTime = () => {
       if (birthDate) {
         const birth = new Date(birthDate);
@@ -38,14 +36,10 @@ const LifeCountdown = () => {
         const diffTime = Math.abs(now.getTime() - birth.getTime());
 
         const months = Math.floor(diffTime / (1000 * 60 * 60 * 24 * 30.44));
-        const days = Math.floor(
-          (diffTime % (1000 * 60 * 60 * 24 * 30.44)) / (1000 * 60 * 60 * 24)
-        );
-        const hours = Math.floor(
-          (diffTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-        );
-        const minutes = Math.floor((diffTime % (1000 * 60 * 60)) / (1000 * 60));
-        const seconds = Math.floor((diffTime % (1000 * 60)) / 1000);
+        const days = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+        const hours = Math.floor(diffTime / (1000 * 60 * 60));
+        const minutes = Math.floor(diffTime / (1000 * 60));
+        const seconds = Math.floor(diffTime / 1000);
 
         setTime({ months, days, hours, minutes, seconds });
       }
@@ -53,30 +47,28 @@ const LifeCountdown = () => {
 
     calculateTime();
     const timer = setInterval(calculateTime, 1000); // Update every second
-    handleSetBirthDate();
 
     return () => clearInterval(timer);
   }, [birthDate]);
 
-  const formatNumber = (num: number, padding: number): string => {
-    return num.toString().padStart(padding, "0");
+  const formatNumber = (num: number): string => {
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   };
 
-  const TimeUnit: React.FC<{
-    value: number;
-    unit: string;
-    padding: number;
-  }> = ({ value, unit, padding }) => (
-    <div className="text-center p-2">
-      <div className="font-mono text-3xl font-bold mb-1 h-10 flex items-center justify-center">
-        {formatNumber(value, padding)}
+  const TimeDisplay: React.FC<{ value: number; unit: string }> = ({
+    value,
+    unit,
+  }) => (
+    <div className="text-center p-4">
+      <div className="font-mono text-5xl font-bold mb-2">
+        {formatNumber(value)}
       </div>
-      <div className="text-xs text-gray-400 uppercase">{unit}</div>
+      <div className="text-xl text-gray-400">{unit}</div>
     </div>
   );
 
   const handleSetBirthDate = () => {
-    // Save birth date to local storage
+    setBirthDate(birthDate);
     localStorage.setItem("birthDate", birthDate);
   };
 
@@ -87,13 +79,30 @@ const LifeCountdown = () => {
           <CardTitle className="text-center">Life Countdown</CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
-          <div className="grid grid-cols-5 gap-2">
-            <TimeUnit value={time.months} unit="Months" padding={3} />
-            <TimeUnit value={time.days} unit="Days" padding={2} />
-            <TimeUnit value={time.hours} unit="Hours" padding={2} />
-            <TimeUnit value={time.minutes} unit="Minutes" padding={2} />
-            <TimeUnit value={time.seconds} unit="Seconds" padding={2} />
-          </div>
+          <Tabs defaultValue="months" className="w-full">
+            <TabsList className="grid w-full grid-cols-5">
+              <TabsTrigger value="months">Months</TabsTrigger>
+              <TabsTrigger value="days">Days</TabsTrigger>
+              <TabsTrigger value="hours">Hours</TabsTrigger>
+              <TabsTrigger value="minutes">Minutes</TabsTrigger>
+              <TabsTrigger value="seconds">Seconds</TabsTrigger>
+            </TabsList>
+            <TabsContent value="months">
+              <TimeDisplay value={time.months} unit="Months" />
+            </TabsContent>
+            <TabsContent value="days">
+              <TimeDisplay value={time.days} unit="Days" />
+            </TabsContent>
+            <TabsContent value="hours">
+              <TimeDisplay value={time.hours} unit="Hours" />
+            </TabsContent>
+            <TabsContent value="minutes">
+              <TimeDisplay value={time.minutes} unit="Minutes" />
+            </TabsContent>
+            <TabsContent value="seconds">
+              <TimeDisplay value={time.seconds} unit="Seconds" />
+            </TabsContent>
+          </Tabs>
           <div className="space-y-2">
             <Label htmlFor="birthdate">Enter your birth date</Label>
             <Input
@@ -105,9 +114,9 @@ const LifeCountdown = () => {
           </div>
         </CardContent>
         <CardFooter>
-          {/* <Button className="w-full" onClick={handleSetBirthDate}>
+          <Button className="w-full" onClick={handleSetBirthDate}>
             Set Birth Date
-          </Button> */}
+          </Button>
         </CardFooter>
       </Card>
     </div>
