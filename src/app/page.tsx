@@ -68,14 +68,14 @@ const slugs = [
 export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center overflow-hidden bg-black">
-      <div className="h-full relative w-full p-5 ">
-        <div className="p-5 z-10 h-[40rem] w-full relative border border-gray-600 antialiased flex justify-between">
-          <div className="flex flex-col justify-between w-[70%]">
+      <div className="h-full relative w-full p-2 sm:p-5">
+        <div className="p-3 sm:p-5 z-10 min-h-[40rem] w-full relative border border-gray-600 antialiased flex flex-col lg:flex-row justify-between">
+          <div className="flex flex-col justify-between w-full lg:w-[70%] mb-8 lg:mb-0">
             <div>
               <HyperText
                 duration={500}
                 className={cn(
-                  "text-4xl bg-clip-text text-transparent bg-gradient-to-b from-neutral-300 to-neutral-400",
+                  "text-2xl sm:text-4xl bg-clip-text text-transparent bg-gradient-to-b from-neutral-300 to-neutral-400",
                   exo.className
                 )}
                 text="Hi, I'm Snehasis Debbarman"
@@ -84,7 +84,7 @@ export default function Home() {
               <HyperText
                 duration={1000}
                 className={cn(
-                  " text-gray-500 bg-clip-text  bg-gradient-to-b from-neutral-400 to-neutral-500",
+                  "text-sm sm:text-base text-gray-500 bg-clip-text bg-gradient-to-b from-neutral-400 to-neutral-500",
                   exo.className
                 )}
                 text="frontend & Mobile Developer"
@@ -92,35 +92,32 @@ export default function Home() {
             </div>
 
             <motion.div
-              className="  w-full overflow-x-scroll"
+              className="w-full overflow-x-auto"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 1, duration: 1 }}
             >
-              {/* <CustomDock /> */}
               <SparklesText
-                className="text-white font-semibold pt-5 text-5xl ml-5"
+                className="text-white font-semibold pt-5 text-3xl sm:text-5xl ml-2 sm:ml-5"
                 text="Projects"
               />
 
-              <div className="flex w-full overflow-x-scroll py-10 ">
+              <div className="flex  w-full overflow-y-auto py-5 sm:py-10 gap-8 sm:gap-8">
                 {projects.map((project, i) => (
                   <ThreeDPin key={`key-project-${i}`} {...project} />
                 ))}
               </div>
             </motion.div>
           </div>
-          <div
-            className={" w-[15%] text-pretty  h-full  flex flex-col-reverse"}
-          >
+          <div className="w-full lg:w-[25%] text-pretty h-full flex flex-col-reverse">
             <motion.div
               className={cn(
-                "text-gray-600 text-lg font-semibold",
+                "text-gray-600 text-sm sm:text-lg font-semibold",
                 exo.className
               )}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 3, duration: 1 }} // 3-second delay before revealing
+              transition={{ delay: 3, duration: 1 }}
             >
               Focusing on user centric experiences. Passionate about solving
               complex problems and continuously learning new technologies.

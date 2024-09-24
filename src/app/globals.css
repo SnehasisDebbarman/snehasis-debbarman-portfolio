@@ -50,6 +50,7 @@
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
   }
+
   .dark {
     --background: 240 10% 3.9%;
     --foreground: 0 0% 98%;
@@ -80,9 +81,14 @@
 
 @layer base {
   * {
-    @apply border-border;
+    @apply transition-colors duration-300 ease-in-out;
   }
+
   body {
-    @apply bg-background text-foreground;
+    @apply bg-white text-black;
+  }
+
+  .dark body {
+    @apply bg-gray-900 text-white;
   }
 }
