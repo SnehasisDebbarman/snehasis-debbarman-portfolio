@@ -1,4 +1,3 @@
-// pages/index.tsx
 'use client'
 import React from 'react';
 import Head from 'next/head';
@@ -6,6 +5,7 @@ import { motion } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { atomDark } from 'react-syntax-highlighter/dist/cjs/styles/prism';
+import { useTheme } from 'next-themes';
 
 interface BlogPost {
   title: string;
@@ -21,41 +21,46 @@ const CodeBlock: React.FC<{ language: string | null; value: string }> = ({ langu
   );
 };
 
-const BlogPost: React.FC<BlogPost> = ({ title, date, content }) => (
-  <motion.article 
-    initial={{ opacity: 0, y: 50 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.5 }}
-    className="mb-12 p-6 bg-white rounded-lg shadow-lg"
-  >
-    <h2 className="text-3xl font-bold mb-2 text-indigo-600">{title}</h2>
-    <p className="text-gray-500 mb-4">{date}</p>
-    <div className="prose prose-lg max-w-none">
-      <ReactMarkdown
-        components={{
-          code: ({ node, inline, className, children, ...props }) => {
-            const match = /language-(\w+)/.exec(className || '');
-            return !inline && match ? (
-              <CodeBlock
-                language={match[1]}
-                value={String(children).replace(/\n$/, '')}
-                {...props}
-              />
-            ) : (
-              <code className={className} {...props}>
-                {children}
-              </code>
-            );
-          },
-        }}
-      >
-        {content}
-      </ReactMarkdown>
-    </div>
-  </motion.article>
-);
+const BlogPost: React.FC<BlogPost> = ({ title, date, content }) => {
+  const { theme } = useTheme();
+
+  return (
+    <motion.article 
+      initial={{ opacity: 0, y: 50 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className={`mb-12 p-6 rounded-lg shadow-lg ${theme === 'dark' ? 'bg-gray-800 text-white' : 'bg-white text-black'}`}
+    >
+      <h2 className={`text-3xl font-bold mb-2 ${theme === 'dark' ? 'text-indigo-300' : 'text-indigo-600'}`}>{title}</h2>
+      <p className="text-gray-500 mb-4">{date}</p>
+      <div className={`prose prose-lg max-w-none ${theme === 'dark' ? 'prose-invert' : ''}`}>
+        <ReactMarkdown
+          components={{
+            code: ({ node, inline, className, children, ...props }) => {
+              const match = /language-(\w+)/.exec(className || '');
+              return !inline && match ? (
+                <CodeBlock
+                  language={match[1]}
+                  value={String(children).replace(/\n$/, '')}
+                  {...props}
+                />
+              ) : (
+                <code className={className} {...props}>
+                  {children}
+                </code>
+              );
+            },
+          }}
+        >
+          {content}
+        </ReactMarkdown>
+      </div>
+    </motion.article>
+  );
+};
 
 const Home: React.FC = () => {
+  const { theme } = useTheme();
   const blogPosts: BlogPost[] = [
     {
       title: "Advanced JavaScript: Currying and Function Composition",
@@ -323,7 +328,7 @@ This creates an interactive card that flips to reveal personal information when 
   ];
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className={`min-h-screen ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-100'}`}>
       <Head>
         <title>Advanced JavaScript and React Blog</title>
         <link rel="icon" href="/favicon.ico" />
@@ -334,7 +339,7 @@ This creates an interactive card that flips to reveal personal information when 
           initial={{ opacity: 0, y: -50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="text-5xl font-bold mb-12 text-center text-indigo-800"
+          className={`text-5xl font-bold mb-12 text-center ${theme === 'dark' ? 'text-indigo-300' : 'text-indigo-800'}`}
         >
           Advanced JavaScript and React Blog
         </motion.h1>
@@ -343,7 +348,7 @@ This creates an interactive card that flips to reveal personal information when 
         ))}
       </main>
 
-      <footer className="py-4 text-center text-gray-500">
+      <footer className={`py-4 text-center ${theme === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>
         © 2024 Advanced JavaScript and React Blog
       </footer>
     </div>
