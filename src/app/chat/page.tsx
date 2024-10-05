@@ -3,11 +3,10 @@ import React, { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import ReactMarkdown from "react-markdown";
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { vscDarkPlus } from "react-syntax-highlighter/dist/cjs/styles/prism";
+import { Highlight, themes } from "prism-react-renderer";
 import { Arvo } from "next/font/google";
 import { cn } from "@/lib/utils";
-import { Send, Info, X } from "lucide-react";
+import { Send, Info } from "lucide-react";
 import AnimatedShinyText from "@/components/ui/animated-shiny-text";
 import {
   Dialog,
@@ -85,19 +84,40 @@ const ChatBubble: React.FC<Message> = ({ role, content }) => {
                         <CopyIcon />
                       </button>
                     </div>
-                    <SyntaxHighlighter
-                      language={match[1]}
-                      PreTag="div"
-                      style={vscDarkPlus}
-                      customStyle={{
-                        background: "transparent",
-                        padding: "0.5em",
-                        fontFamily: arvo.className,
-                      }}
-                      {...props}
+                    <Highlight
+                      theme={themes.vsDark}
+                      code={String(children).replace(/\n$/, "")}
+                      language={match[1] as any}
                     >
-                      {String(children).replace(/\n$/, "")}
-                    </SyntaxHighlighter>
+                      {({
+                        className,
+                        style,
+                        tokens,
+                        getLineProps,
+                        getTokenProps,
+                      }) => (
+                        <pre
+                          className={className}
+                          style={{
+                            ...style,
+                            background: "transparent",
+                            padding: "0.5em",
+                            fontFamily: arvo.style.fontFamily,
+                          }}
+                        >
+                          {tokens.map((line, i) => (
+                            <div key={i} {...getLineProps({ line, key: i })}>
+                              {line.map((token, key) => (
+                                <span
+                                  key={key}
+                                  {...getTokenProps({ token, key })}
+                                />
+                              ))}
+                            </div>
+                          ))}
+                        </pre>
+                      )}
+                    </Highlight>
                   </div>
                 </div>
               ) : (
