@@ -1,0 +1,7 @@
+{
+  "functions": {
+    "api/ollama-proxy/*.ts": {
+      "maxDuration": 60
+    }
+  }
+}
