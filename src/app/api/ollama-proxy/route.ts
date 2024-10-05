@@ -1,14 +1,16 @@
-// app/api/ollama-proxy/route.ts
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
-  const { apiUrl, ...bodyData } = await request.json();
-
-  if (!apiUrl) {
-    return NextResponse.json({ error: "API URL is required" }, { status: 400 });
-  }
-
   try {
+    const { apiUrl, ...bodyData } = await request.json();
+
+    if (!apiUrl) {
+      return NextResponse.json(
+        { error: "API URL is required" },
+        { status: 400 }
+      );
+    }
+
     console.log(`Attempting to connect to Ollama API at: ${apiUrl}`);
     const ollameResponse = await fetch(`${apiUrl}/api/generate`, {
       method: "POST",
@@ -24,19 +26,11 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create a TransformStream to modify the stream
-    const transformStream = new TransformStream({
-      transform(chunk, controller) {
-        // Pass through the chunk as-is
-        controller.enqueue(chunk);
-      },
-    });
-
-    // Pipe the response through our transform stream
-    const stream = ollameResponse.body?.pipeThrough(transformStream);
+    // Create a ReadableStream from the response body
+    const readableStream = ollameResponse.body;
 
     // Return a streaming response
-    return new NextResponse(stream, {
+    return new NextResponse(readableStream, {
       headers: {
         "Content-Type": "text/event-stream",
         "Cache-Control": "no-cache",
