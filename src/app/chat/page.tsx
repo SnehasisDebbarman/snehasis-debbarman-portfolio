@@ -4,10 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import ReactMarkdown from "react-markdown";
 import { Highlight, themes } from "prism-react-renderer";
-import { Arvo } from "next/font/google";
+import { Inter } from "next/font/google";
 import { cn } from "@/lib/utils";
-import { Send, Info } from "lucide-react";
-import AnimatedShinyText from "@/components/ui/animated-shiny-text";
+import { Send, Trash2, Copy } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -18,33 +17,12 @@ import {
 } from "@/components/ui/dialog";
 import Link from "next/link";
 
-const arvo = Arvo({
-  weight: "400",
-  subsets: ["latin"],
-  style: "normal",
-});
+const inter = Inter({ subsets: ["latin"] });
 
 interface Message {
   role: "user" | "assistant";
   content: string;
 }
-
-const CopyIcon: React.FC = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-  </svg>
-);
 
 const ChatBubble: React.FC<Message> = ({ role, content }) => {
   const copyToClipboard = (text: string) => {
@@ -56,15 +34,18 @@ const ChatBubble: React.FC<Message> = ({ role, content }) => {
   return (
     <div
       className={cn(
-        arvo.className,
-        `flex ${role === "user" ? "justify-end" : "justify-start"} mb-4`
+        inter.className,
+        `grid w-full mb-4 ${
+          role === "assistant" ? "" : "justify-end items-end"
+        }`
       )}
     >
+      <div className="w-12 flex-shrink-0 flex justify-center pt-4 text-left mb-4">
+        {role === "assistant" ? "AI" : "You"}
+      </div>
       <div
-        className={`max-w-[70%] rounded-lg p-3 ${
-          role === "user"
-            ? "bg-gray-800 text-gray-200"
-            : "bg-gray-900 text-gray-300"
+        className={`flex-grow p-4 bg-gray-100 rounded-md ${
+          role === "user" ? "text-gray-700" : "text-gray-800"
         }`}
       >
         <ReactMarkdown
@@ -73,51 +54,52 @@ const ChatBubble: React.FC<Message> = ({ role, content }) => {
               const match = /language-(\w+)/.exec(className || "");
               return !inline && match ? (
                 <div className="relative mt-2 mb-2">
-                  <div className="bg-black rounded-lg p-1">
+                  <div className="bg-gray-200 rounded-lg p-1">
                     <div className="flex justify-between items-center mb-2">
-                      <span className="text-xs text-gray-400">{match[1]}</span>
+                      <span className="text-xs text-gray-500">{match[1]}</span>
                       <button
                         onClick={() => copyToClipboard(String(children))}
-                        className="text-gray-400 hover:text-gray-200 transition-colors"
+                        className="text-gray-500 hover:text-gray-700 transition-colors"
                         title="Copy code"
                       >
-                        <CopyIcon />
+                        <Copy size={20} />
                       </button>
                     </div>
-                    <Highlight
-                      theme={themes.vsDark}
-                      code={String(children).replace(/\n$/, "")}
-                      language={match[1] as any}
-                    >
-                      {({
-                        className,
-                        style,
-                        tokens,
-                        getLineProps,
-                        getTokenProps,
-                      }) => (
-                        <pre
-                          className={className}
-                          style={{
-                            ...style,
-                            background: "transparent",
-                            padding: "0.5em",
-                            fontFamily: arvo.style.fontFamily,
-                          }}
-                        >
-                          {tokens.map((line, i) => (
-                            <div key={i} {...getLineProps({ line, key: i })}>
-                              {line.map((token, key) => (
-                                <span
-                                  key={key}
-                                  {...getTokenProps({ token, key })}
-                                />
-                              ))}
-                            </div>
-                          ))}
-                        </pre>
-                      )}
-                    </Highlight>
+                    <div className="max-w-[calc(100vw-4rem)] md:max-w-[calc(100vw-20rem)] overflow-x-auto">
+                      <Highlight
+                        theme={themes.github}
+                        code={String(children).replace(/\n$/, "")}
+                        language={match[1] as any}
+                      >
+                        {({
+                          className,
+                          style,
+                          tokens,
+                          getLineProps,
+                          getTokenProps,
+                        }) => (
+                          <pre
+                            className={className}
+                            style={{
+                              ...style,
+                              background: "transparent",
+                              padding: "0.5em",
+                            }}
+                          >
+                            {tokens.map((line, i) => (
+                              <div key={i} {...getLineProps({ line, key: i })}>
+                                {line.map((token, key) => (
+                                  <span
+                                    key={key}
+                                    {...getTokenProps({ token, key })}
+                                  />
+                                ))}
+                              </div>
+                            ))}
+                          </pre>
+                        )}
+                      </Highlight>
+                    </div>
                   </div>
                 </div>
               ) : (
@@ -138,36 +120,30 @@ const ChatBubble: React.FC<Message> = ({ role, content }) => {
 const InfoModal: React.FC = () => (
   <Dialog>
     <DialogTrigger asChild>
-      <Button variant="ghost" className="absolute top-4 right-4 text-gray-300">
-        <Info size={24} />
+      <Button variant="ghost" className="text-gray-500">
+        help
       </Button>
     </DialogTrigger>
-    <DialogContent className="bg-gray-800 text-gray-200">
+    <DialogContent className="bg-white text-gray-800">
       <DialogHeader>
-        <DialogTitle>How to Run</DialogTitle>
+        <DialogTitle>About this Chat Interface</DialogTitle>
       </DialogHeader>
-      <DialogDescription className="text-gray-200">
-        <p>To run this chat interface:</p>
+      <DialogDescription>
+        <p>This chat interface uses Ollama to run language models locally:</p>
         <ol className="list-decimal list-inside mt-2">
           <li>
-            Install ollama from below link-
-            <Link href={"https://ollama.com/"}> OLLAMA</Link>
+            Install Ollama from{" "}
+            <Link
+              href="https://ollama.com/"
+              className="text-blue-500 hover:underline"
+            >
+              ollama.com
+            </Link>
           </li>
           <li>
-            <span>
-              type in your terminal (default is llama3.2:latest)
-              <pre>ollama run llama3.2</pre>
-            </span>
+            Run a model (e.g., <code>ollama run llama3.2</code>)
           </li>
-          <li>
-            if you want to know your model name - run - `ollama list` in
-            terminal- then put it on input
-          </li>
-          <li>
-            set url default is `http://localhost:11434`. if not working then run
-            `ollama serve` in terminal you will get your url ant put it in url
-            section
-          </li>
+          <li>Set the model name and API URL in the chat interface</li>
         </ol>
         <p className="mt-2">
           The chat will use the specified model and API URL to generate
@@ -200,14 +176,14 @@ const ChatInterface: React.FC = () => {
     setIsLoading(true);
 
     try {
-      const response = await fetch(`${apiUrl}/v1/chat/completions`, {
+      const response = await fetch(`${apiUrl}/api/generate`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
           model: modelName,
-          messages: [userMessage],
+          prompt: input,
           stream: true,
         }),
       });
@@ -217,13 +193,10 @@ const ChatInterface: React.FC = () => {
       }
 
       const reader = response.body?.getReader();
-      const decoder = new TextDecoder("utf-8");
-      let aiMessageContent = "";
+      const decoder = new TextDecoder();
+      let assistantMessage: Message = { role: "assistant", content: "" };
 
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        { role: "assistant", content: "" },
-      ]);
+      setMessages((prevMessages) => [...prevMessages, assistantMessage]);
 
       while (true) {
         const { done, value } = await reader!.read();
@@ -233,22 +206,19 @@ const ChatInterface: React.FC = () => {
         const lines = chunk.split("\n");
 
         for (const line of lines) {
-          if (line.trim() === "data: [DONE]") {
-            break;
-          }
-          if (line.startsWith("data: ")) {
-            try {
-              const data = JSON.parse(line.slice(6));
-              if (data.choices && data.choices[0].delta.content) {
-                aiMessageContent += data.choices[0].delta.content;
-                setMessages((prevMessages) => [
-                  ...prevMessages.slice(0, -1),
-                  { role: "assistant", content: aiMessageContent },
-                ]);
-              }
-            } catch (error) {
-              console.error("Error parsing JSON:", error);
+          if (line.trim() === "") continue;
+
+          try {
+            const data = JSON.parse(line);
+            if (data.response) {
+              assistantMessage.content += data.response;
+              setMessages((prevMessages) => [
+                ...prevMessages.slice(0, -1),
+                { ...assistantMessage },
+              ]);
             }
+          } catch (error) {
+            console.error("Error parsing JSON:", error);
           }
         }
       }
@@ -266,53 +236,67 @@ const ChatInterface: React.FC = () => {
     setIsLoading(false);
   };
 
+  const clearChat = () => {
+    setMessages([]);
+  };
+
   return (
-    <div className="flex flex-col h-screen bg-black text-gray-300">
-      <InfoModal />
-      <div className="p-4 bg-gray-900">
-        <div className="max-w-3xl mx-auto flex space-x-4">
-          <Input
-            type="text"
-            value={modelName}
-            onChange={(e) => setModelName(e.target.value)}
-            placeholder="Model name"
-            className="flex-grow bg-gray-800 text-gray-200 border-0 outline-none px-4 py-2 rounded-md border-transparent focus:border-0 focus:outline-none focus:ring-2 focus:ring-transparent"
-          />
-          <Input
-            type="text"
-            value={apiUrl}
-            onChange={(e) => setApiUrl(e.target.value)}
-            placeholder="API URL"
-            className="flex-grow bg-gray-800 text-gray-200 border-0 outline-none px-4 py-2 rounded-md border-transparent focus:border-0 focus:outline-none focus:ring-2 focus:ring-transparent"
-          />
+    <div
+      className={cn(inter.className, "flex h-screen bg-white text-gray-800")}
+    >
+      <div className="w-64 bg-gray-100 p-4 hidden md:block">
+        <h2 className="text-xl font-semibold mb-4">Settings</h2>
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Model
+            </label>
+            <Input
+              type="text"
+              value={modelName}
+              onChange={(e) => setModelName(e.target.value)}
+              className="mt-1"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700">
+              Model local URL
+            </label>
+            <Input
+              type="text"
+              value={apiUrl}
+              onChange={(e) => setApiUrl(e.target.value)}
+              className="mt-1"
+            />
+          </div>
+          <InfoModal />
         </div>
       </div>
-      <div className="flex-grow overflow-auto p-4">
-        <div className="max-w-3xl mx-auto">
+      <div className="flex-grow flex flex-col">
+        <div className="flex-grow overflow-auto p-4">
           {messages.map((message, index) => (
             <ChatBubble key={index} {...message} />
           ))}
-          {isLoading && (
-            <AnimatedShinyText className="inline-flex items-center justify-center px-4 py-1 transition ease-out hover:text-gray-100 hover:duration-300 ">
-              <span>✨ Generating...</span>
-            </AnimatedShinyText>
-          )}
+          {isLoading && <div className="flex p-4">LLM is thinking ...</div>}
           <div ref={messagesEndRef} />
         </div>
-      </div>
-      <div className="p-4 bg-gray-900">
-        <form onSubmit={handleSubmit} className="max-w-3xl mx-auto flex">
-          <Input
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Type your message here..."
-            className="flex-grow bg-gray-800 text-gray-200 border-0 outline-none px-4 py-2 rounded-l-md border-transparent focus:border-0 focus:outline-none focus:ring-2 focus:ring-transparent"
-          />
-          <Button variant="ghost" type="submit">
-            <Send />
-          </Button>
-        </form>
+        <div className="p-4 border-t">
+          <form onSubmit={handleSubmit} className="flex space-x-2">
+            <Input
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Type a message..."
+              className="flex-grow"
+            />
+            <Button type="submit" disabled={isLoading}>
+              <Send size={20} />
+            </Button>
+            <Button type="button" variant="outline" onClick={clearChat}>
+              <Trash2 size={20} />
+            </Button>
+          </form>
+        </div>
       </div>
     </div>
   );
