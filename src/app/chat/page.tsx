@@ -7,8 +7,17 @@ import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/cjs/styles/prism";
 import { Arvo } from "next/font/google";
 import { cn } from "@/lib/utils";
-import { Send } from "lucide-react";
+import { Send, Info, X } from "lucide-react";
 import AnimatedShinyText from "@/components/ui/animated-shiny-text";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import Link from "next/link";
 
 const arvo = Arvo({
   weight: "400",
@@ -106,11 +115,54 @@ const ChatBubble: React.FC<Message> = ({ role, content }) => {
   );
 };
 
+const InfoModal: React.FC = () => (
+  <Dialog>
+    <DialogTrigger asChild>
+      <Button variant="ghost" className="absolute top-4 right-4 text-gray-300">
+        <Info size={24} />
+      </Button>
+    </DialogTrigger>
+    <DialogContent className="bg-gray-800 text-gray-200">
+      <DialogHeader>
+        <DialogTitle>How to Run</DialogTitle>
+      </DialogHeader>
+      <DialogDescription className="text-gray-200">
+        <p>To run this chat interface:</p>
+        <ol className="list-decimal list-inside mt-2">
+          <li>
+            Install ollama from below link-
+            <Link href={"https://ollama.com/"}> OLLAMA</Link>
+          </li>
+          <li>
+            <span>
+              type in your terminal (default is llama3.2:latest)
+              <pre>ollama run llama3.2</pre>
+            </span>
+          </li>
+          <li>
+            if you want to know your model name - run - `ollama list` in
+            terminal- then put it on input
+          </li>
+          <li>
+            set url default is `http://localhost:11434`. if not working then run
+            `ollama serve` in terminal you will get your url ant put it in url
+            section
+          </li>
+        </ol>
+        <p className="mt-2">
+          The chat will use the specified model and API URL to generate
+          responses.
+        </p>
+      </DialogDescription>
+    </DialogContent>
+  </Dialog>
+);
+
 const ChatInterface: React.FC = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
-  const [modelName, setModelName] = useState<string>("llama3.1:latest");
-  const [customModel, setCustomModel] = useState<string>("");
+  const [modelName, setModelName] = useState<string>("llama3.2:latest");
+  const [apiUrl, setApiUrl] = useState<string>("http://localhost:11434");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -128,20 +180,17 @@ const ChatInterface: React.FC = () => {
     setIsLoading(true);
 
     try {
-      const response = await fetch(
-        "http://localhost:11434/v1/chat/completions",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            model: modelName === "custom" ? customModel : modelName,
-            messages: [userMessage],
-            stream: true,
-          }),
-        }
-      );
+      const response = await fetch(`${apiUrl}/v1/chat/completions`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: modelName,
+          messages: [userMessage],
+          stream: true,
+        }),
+      });
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -199,6 +248,25 @@ const ChatInterface: React.FC = () => {
 
   return (
     <div className="flex flex-col h-screen bg-black text-gray-300">
+      <InfoModal />
+      <div className="p-4 bg-gray-900">
+        <div className="max-w-3xl mx-auto flex space-x-4">
+          <Input
+            type="text"
+            value={modelName}
+            onChange={(e) => setModelName(e.target.value)}
+            placeholder="Model name"
+            className="flex-grow bg-gray-800 text-gray-200 border-0 outline-none px-4 py-2 rounded-md border-transparent focus:border-0 focus:outline-none focus:ring-2 focus:ring-transparent"
+          />
+          <Input
+            type="text"
+            value={apiUrl}
+            onChange={(e) => setApiUrl(e.target.value)}
+            placeholder="API URL"
+            className="flex-grow bg-gray-800 text-gray-200 border-0 outline-none px-4 py-2 rounded-md border-transparent focus:border-0 focus:outline-none focus:ring-2 focus:ring-transparent"
+          />
+        </div>
+      </div>
       <div className="flex-grow overflow-auto p-4">
         <div className="max-w-3xl mx-auto">
           {messages.map((message, index) => (
@@ -221,7 +289,7 @@ const ChatInterface: React.FC = () => {
             placeholder="Type your message here..."
             className="flex-grow bg-gray-800 text-gray-200 border-0 outline-none px-4 py-2 rounded-l-md border-transparent focus:border-0 focus:outline-none focus:ring-2 focus:ring-transparent"
           />
-          <Button className="bg-gray-700 hover:bg-gray-600" type="submit">
+          <Button variant="ghost" type="submit">
             <Send />
           </Button>
         </form>
