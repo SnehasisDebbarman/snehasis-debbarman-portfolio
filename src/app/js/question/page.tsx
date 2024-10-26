@@ -64,7 +64,7 @@ const Home: React.FC = () => {
   const blogPosts: BlogPost[] = [
     {
       title: "Advanced JavaScript: Currying and Function Composition",
-      date: "2024-09-26",
+      date: "2024/09/26",
       content: `
 # Currying in JavaScript
 
